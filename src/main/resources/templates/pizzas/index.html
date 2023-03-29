@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <div th:replace="~{fragments/link :: link}"></div>
+
+    <title>Pizzas</title>
+</head>
+
+<body>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${!list.isEmpty()}" th:each="pizza : ${pizzas}" th:object="${pizza}">
+                    <td th:text="*{id}"></td>
+                    <td th:text="*{name}"></td>
+                    <td th:text="*{description}"></td>
+                    <td th:text="*{price}"></td>
+                </tr>
+                <tr th:if="${list.isEmpty()}">
+                    <td colspan="4">Sorry, there aren't pizzas avaiable</td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
