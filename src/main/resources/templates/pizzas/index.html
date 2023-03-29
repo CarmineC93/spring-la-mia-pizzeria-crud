@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:if="${!list.isEmpty()}" th:each="pizza : ${pizzas}" th:object="${pizza}">
+                <tr th:if="${!list.isEmpty()}" th:each="pizza : ${list}" th:object="${pizza}">
                     <td th:text="*{id}"></td>
                     <td th:text="*{name}"></td>
                     <td th:text="*{description}"></td>
