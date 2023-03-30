@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<header th:replace="~{fragments/navbar :: navbar('pizzas')}"></header>
+<header th:replace="~{fragments/navbar :: navbar('pizzas', '', false)}"></header>
 
 <div class="container" th:object="${pizza}">
     <h1 th:text="*{name}">Pizzas</h1>

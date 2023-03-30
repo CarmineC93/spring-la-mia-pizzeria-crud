@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<header th:replace="~{fragments/navbar :: navbar('pizzas')}"></header>
+<header th:replace="~{fragments/navbar :: navbar('pizzas', ${keyword}, true)}"></header>
 
         <table>
             <thead>

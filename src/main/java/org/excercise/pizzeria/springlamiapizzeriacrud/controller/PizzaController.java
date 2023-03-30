@@ -3,6 +3,7 @@ package org.excercise.pizzeria.springlamiapizzeriacrud.controller;
 import org.excercise.pizzeria.springlamiapizzeriacrud.model.Pizza;
 import org.excercise.pizzeria.springlamiapizzeriacrud.repository.PizzaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,8 +24,20 @@ public class PizzaController {
         private PizzaRepository pizzaRepository;
 
         @GetMapping
-        public String index(Model model) {
-            List<Pizza> pizzas = pizzaRepository.findAll();
+        //uso Option perchè il parametro potrà esserci come non esserci
+        public String index(Model model, @RequestParam(name = "q") Optional<String> keyword) {
+            List<Pizza> pizzas;
+            //se il parametro non arriva visualizerà tutto l'elenco
+            if(keyword.isEmpty()){
+               pizzas = pizzaRepository.findAll(Sort.by("name"));
+                model.addAttribute("list", pizzas);
+            }
+            //se invece viene passato un parametro, verrà estratto e fatta partire una query con il metodo repository
+            else{
+                pizzas = pizzaRepository.findByNameContainingIgnoreCase(keyword.get());
+                //se ci saranno parametri di ricerca collego il parametro passato nell'input al model
+                model.addAttribute("keyword", keyword.get());
+            }
             model.addAttribute("list", pizzas);
             return "/pizzas/index";
         }
