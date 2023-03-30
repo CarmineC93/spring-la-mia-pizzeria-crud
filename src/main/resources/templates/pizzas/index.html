@@ -9,13 +9,17 @@
 </head>
 
 <body>
+<header th:replace="~{fragments/navbar :: navbar('pizzas')}"></header>
+
         <table>
             <thead>
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>price</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -24,9 +28,13 @@
                     <td th:text="*{name}"></td>
                     <td th:text="*{description}"></td>
                     <td th:text="*{price}"></td>
+                    <td>
+                        <a th:href="@{|/pizzas/*{id}|}">Detail</a>
+                    </td>
+
                 </tr>
                 <tr th:if="${list.isEmpty()}">
-                    <td colspan="4">Sorry, there aren't pizzas avaiable</td>
+                    <td colspan="4">Sorry, there aren't pizzas available</td>
                 </tr>
             </tbody>
         </table>
