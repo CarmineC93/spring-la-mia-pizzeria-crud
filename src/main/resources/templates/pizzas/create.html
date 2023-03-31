@@ -10,10 +10,11 @@
   <h1>New pizza</h1>
   <form id="pizza-form" method="post" th:object="${pizza}" th:action="@{/pizzas/create}"
         class="row gy-3">
-    <!-- errors -->
+    <!-- Errors -->
     <ul>
       <li th:each="err : ${#fields.globalErrors() }" th:text="${err}"></li>
     </ul>
+
     <!-- Name -->
     <div class="col-12">
       <label class="form-label" for="name">Name</label>
@@ -42,7 +43,7 @@
     <!-- Price -->
     <div class="col-3">
       <label class="form-label" for="price">Price</label>
-      <input type="number" id="price" class="form-control" th:field="*{price}"
+      <input type="number" min="1" step="any" id="price" class="form-control" th:field="*{price}"
              th:errorClass="is-invalid">
       <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}">
         <ul>

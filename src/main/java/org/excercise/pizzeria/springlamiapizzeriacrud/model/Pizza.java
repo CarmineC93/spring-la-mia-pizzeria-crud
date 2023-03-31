@@ -18,7 +18,7 @@ public class Pizza {
     @NotEmpty(message = "Text can not be empty :(")
     private String name;
     @NotEmpty(message = "Text can not be empty :(")
-    @Max(value = 250, message = "The text must be smaller than 250 characters :(")
+    @Size(min = 10 ,max = 250, message = "The text must be smaller than 250 characters :(" )
     @Lob
     private String description;
     @NotNull(message = "Text can not be empty :(")

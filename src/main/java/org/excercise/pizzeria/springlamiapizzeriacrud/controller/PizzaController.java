@@ -67,7 +67,7 @@ public class PizzaController {
                 return "/pizzas/create";
             }
 
-            //per avere più controllo sul nuovo elemento specifico i campi che dovranno comporlo
+            //per avere più controllo sul nuovo elemento, specifico i campi che dovranno comporlo
             Pizza pizzaToSave = new Pizza();
             pizzaToSave.setName(formPizza.getName());
             pizzaToSave.setDescription(formPizza.getDescription());
