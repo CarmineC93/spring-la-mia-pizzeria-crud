@@ -1,8 +1,11 @@
 package org.excercise.pizzeria.springlamiapizzeriacrud.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.math.BigDecimal;
+import java.security.PublicKey;
 
 @Entity
 @Table(name = "pizzas")
@@ -12,10 +15,21 @@ public class Pizza {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotEmpty(message = "Text can not be empty :(")
     private String name;
+    @NotEmpty(message = "Text can not be empty :(")
+    @Max(value = 250, message = "The text must be smaller than 250 characters :(")
+    @Lob
     private String description;
+    @NotNull(message = "Text can not be empty :(")
+    @Positive (message = "Price must be greater than zero :(")
     @Column(nullable = false)
     private BigDecimal price;
+
+    //CONTRUCTOR
+    public Pizza(){
+        super();
+    }
 
     //GETTER & SETTER
 

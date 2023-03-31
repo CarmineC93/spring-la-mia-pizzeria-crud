@@ -1,5 +1,6 @@
 package org.excercise.pizzeria.springlamiapizzeriacrud.controller;
 
+import jakarta.validation.Valid;
 import org.excercise.pizzeria.springlamiapizzeriacrud.model.Pizza;
 import org.excercise.pizzeria.springlamiapizzeriacrud.repository.PizzaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +8,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.naming.Binding;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +52,30 @@ public class PizzaController {
                 //se l'id chiamato non esiste lancerà un'eccezzione
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
+        }
+
+        @GetMapping("/create")
+        public String create(Model model){
+            model.addAttribute("pizza", new Pizza());
+            return "/pizzas/create";
+        }
+
+        @PostMapping("/create")
+        public String doCreate(@Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult br){
+
+            if(br.hasErrors()){
+                return "/pizzas/create";
+            }
+
+            //per avere più controllo sul nuovo elemento specifico i campi che dovranno comporlo
+            Pizza pizzaToSave = new Pizza();
+            pizzaToSave.setName(formPizza.getName());
+            pizzaToSave.setDescription(formPizza.getDescription());
+            pizzaToSave.setPrice(formPizza.getPrice());
+
+            //per far persistere il nuovo elemento
+            pizzaRepository.save(pizzaToSave);
+            return "redirect:/pizzas";
         }
 
     }

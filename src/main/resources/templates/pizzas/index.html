@@ -11,6 +11,10 @@
 <body>
 <header th:replace="~{fragments/navbar :: navbar('pizzas', ${keyword}, true)}"></header>
 
+<h1>Pizzas <a th:href="@{/pizzas/create}" class="btn btn-primary rounded-circle" title="add pizza">
+    Add New Pizza
+</a></h1>
+
         <table>
             <thead>
                 <tr>
