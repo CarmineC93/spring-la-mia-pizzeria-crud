@@ -34,6 +34,9 @@
                     <td th:text="*{price}"></td>
                     <td>
                         <a th:href="@{|/pizzas/*{id}|}">Detail</a>
+                        <a th:href="@{|/pizzas/edit/*{id}|}">Modify</a>
+                        <a th:href="@{|/pizzas/delete/*{id}|}">Delete</a>
+
                     </td>
 
                 </tr>

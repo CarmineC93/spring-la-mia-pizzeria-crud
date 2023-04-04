@@ -28,23 +28,23 @@ public class PizzaController {
         @Autowired
         private PizzaService pizzaService;
 
-    /*        //uso Option perchè il parametro potrà esserci come non esserci
-    public String index(Model model, @RequestParam(name = "q") Optional<String> keyword) {
-        List<Pizza> pizzas;
-        //se il parametro non arriva visualizerà tutto l'elenco
-        if(keyword.isEmpty()){
-           pizzas = pizzaRepository.findAll(Sort.by("name"));
+        /* //uso Option perchè il parametro potrà esserci come non esserci
+        public String index(Model model, @RequestParam(name = "q") Optional<String> keyword) {
+            List<Pizza> pizzas;
+            //se il parametro non arriva visualizerà tutto l'elenco
+            if(keyword.isEmpty()){
+               pizzas = pizzaRepository.findAll(Sort.by("name"));
+                model.addAttribute("list", pizzas);
+            }
+            //se invece viene passato un parametro, verrà estratto e fatta partire una query con il metodo repository
+            else{
+                pizzas = pizzaRepository.findByNameContainingIgnoreCase(keyword.get());
+                //se ci saranno parametri di ricerca collego il parametro passato nell'input al model
+                model.addAttribute("keyword", keyword.get());
+            }
             model.addAttribute("list", pizzas);
-        }
-        //se invece viene passato un parametro, verrà estratto e fatta partire una query con il metodo repository
-        else{
-            pizzas = pizzaRepository.findByNameContainingIgnoreCase(keyword.get());
-            //se ci saranno parametri di ricerca collego il parametro passato nell'input al model
-            model.addAttribute("keyword", keyword.get());
-        }
-        model.addAttribute("list", pizzas);
-        return "/pizzas/index";
-    }*/
+            return "/pizzas/index";
+        }*/
 
         @GetMapping
         public String index(Model model, @RequestParam(name = "q") Optional<String> keyword) {
@@ -61,7 +61,8 @@ public class PizzaController {
         }
 
 
-/*        @GetMapping("/{pizzaId}")
+        /*
+        @GetMapping("/{pizzaId}")
         public String show(@PathVariable("pizzaId") Integer id, Model model){
             Optional<Pizza> result = pizzaRepository.findById(id);
             if(result.isPresent()){
@@ -73,23 +74,22 @@ public class PizzaController {
             }
         }*/
 
-    @GetMapping("/{pizzaId}")
-    public String show(@PathVariable("pizzaId") Integer id, Model model) {
-        try {
-            Pizza pizza = pizzaService.getById(id);
-            model.addAttribute("pizza", pizza);
-            return "/pizzas/show";
-        } catch (PizzaNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with id " + id + " not found");
+        @GetMapping("/{pizzaId}")
+        public String show(@PathVariable("pizzaId") Integer id, Model model) {
+            try {
+                Pizza pizza = pizzaService.getById(id);
+                model.addAttribute("pizza", pizza);
+                return "/pizzas/show";
+            } catch (PizzaNotFoundException e) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with id " + id + " not found");
+            }
         }
-    }
 
         @GetMapping("/create")
         public String create(Model model){
             model.addAttribute("pizza", new Pizza());
             return "/pizzas/create";
         }
-
 
 
         @PostMapping("/create")
@@ -99,14 +99,16 @@ public class PizzaController {
                 return "/pizzas/create";
             }
 
-/*            //per avere più controllo sul nuovo elemento, specifico i campi che dovranno comporlo
+            /*
+            //per avere più controllo sul nuovo elemento, specifico i campi che dovranno comporlo
             Pizza pizzaToSave = new Pizza();
             pizzaToSave.setName(formPizza.getName());
             pizzaToSave.setDescription(formPizza.getDescription());
             pizzaToSave.setPrice(formPizza.getPrice());
 
             //per far persistere il nuovo elemento
-              pizzaRepository.save(pizzaToSave);*/
+              pizzaRepository.save(pizzaToSave);
+            */
 
             pizzaService.createPizza(formPizza);
             return "redirect:/pizzas";
@@ -124,8 +126,10 @@ public class PizzaController {
         }
 
         @PostMapping("/edit/{id}")
-        public String doEdit(@PathVariable Integer id, @ModelAttribute("pizza") Pizza formPizza){
-
+        public String doEdit(@PathVariable Integer id, @Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult bs){
+            if(bs.hasErrors()){
+                return "/pizzas/edit";
+            }
             try{
                 Pizza updatedPizza = pizzaService.updatePizza(formPizza, id);
                 return "redirect:/pizzas/" + Integer.toString(updatedPizza.getId());
@@ -134,7 +138,20 @@ public class PizzaController {
             }
         }
 
-
+        @GetMapping("/delete/{id}")
+        public String delete(@PathVariable Integer id){
+        try{
+            boolean success = pizzaService.deleteById(id);
+            if (success){
+                return "redirect:/pizzas";
+            }
+            else{
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete this pizza");
+                }
+            }catch(PizzaNotFoundException e){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+        }
 
 }
 
