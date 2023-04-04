@@ -2,6 +2,7 @@ package org.excercise.pizzeria.springlamiapizzeriacrud.controller;
 
 import jakarta.validation.Valid;
 import org.excercise.pizzeria.springlamiapizzeriacrud.exceptions.PizzaNotFoundException;
+import org.excercise.pizzeria.springlamiapizzeriacrud.model.CrudMessage;
 import org.excercise.pizzeria.springlamiapizzeriacrud.model.Pizza;
 import org.excercise.pizzeria.springlamiapizzeriacrud.repository.PizzaRepository;
 import org.excercise.pizzeria.springlamiapizzeriacrud.service.PizzaService;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.naming.Binding;
 import java.util.List;
@@ -93,7 +95,7 @@ public class PizzaController {
 
 
         @PostMapping("/create")
-        public String doCreate(@Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult br){
+        public String doCreate(@Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult br, RedirectAttributes redirectAttributes){
 
             if(br.hasErrors()){
                 return "/pizzas/create";
@@ -109,6 +111,8 @@ public class PizzaController {
             //per far persistere il nuovo elemento
               pizzaRepository.save(pizzaToSave);
             */
+
+            redirectAttributes.addFlashAttribute("message", new CrudMessage(CrudMessage.CrudMessageType.SUCCESS, "New Pizza successfully created"));
 
             pizzaService.createPizza(formPizza);
             return "redirect:/pizzas";
@@ -126,12 +130,14 @@ public class PizzaController {
         }
 
         @PostMapping("/edit/{id}")
-        public String doEdit(@PathVariable Integer id, @Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult bs){
+        public String doEdit(@PathVariable Integer id, @Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult bs, RedirectAttributes redirectAttributes){
             if(bs.hasErrors()){
                 return "/pizzas/edit";
             }
             try{
                 Pizza updatedPizza = pizzaService.updatePizza(formPizza, id);
+                redirectAttributes.addFlashAttribute("message", new CrudMessage(CrudMessage.CrudMessageType.SUCCESS, "Pizza " + id + " successfully updated"));
+
                 return "redirect:/pizzas/" + Integer.toString(updatedPizza.getId());
             }catch(PizzaNotFoundException e){
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "pizza with id " + id + " not found");
@@ -139,18 +145,27 @@ public class PizzaController {
         }
 
         @GetMapping("/delete/{id}")
-        public String delete(@PathVariable Integer id){
+        public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes){
         try{
             boolean success = pizzaService.deleteById(id);
             if (success){
-                return "redirect:/pizzas";
+                redirectAttributes.addFlashAttribute("message", new CrudMessage(CrudMessage.CrudMessageType.SUCCESS, "Pizza " + id + " successfully deleted"));
             }
             else{
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to delete this pizza");
+                redirectAttributes.addFlashAttribute("message", new CrudMessage(CrudMessage.CrudMessageType.ERROR, "Pizza " + id + " can NOT be deleted"));
+
                 }
             }catch(PizzaNotFoundException e){
+/*
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
+
+                anzichè lanciare eccezione mandiamo un messaggio userfriendly
+*/
+                redirectAttributes.addFlashAttribute("message", new CrudMessage(CrudMessage.CrudMessageType.ERROR, "Pizza " + id + " can NOT be deleted, because doesn't exist"));
+
+        }
+            return "redirect:/pizzas";
+
         }
 
 }

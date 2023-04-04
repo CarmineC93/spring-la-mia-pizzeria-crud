@@ -10,6 +10,9 @@
 
 <header th:replace="~{fragments/navbar :: navbar('pizzas', '', false)}"></header>
 
+<div th:replace="~{fragments/message :: message}" ></div>
+
+
 <div class="container" th:object="${pizza}">
     <h1 th:text="*{name}">Pizzas</h1>
     <hr/>
